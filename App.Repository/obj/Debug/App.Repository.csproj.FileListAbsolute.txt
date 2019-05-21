@@ -1,0 +1,17 @@
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\ModelsAndRepo.dll.config
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\ModelsAndRepo.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\ModelsAndRepo.pdb
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\App.DataBaseAccess.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\EntityFramework.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\Repository.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\App.DataBaseAccess.pdb
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\App.DataBaseAccess.dll.config
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\Repository.pdb
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\EntityFramework.xml
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\obj\Debug\App.Repository.csprojAssemblyReference.cache
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\obj\Debug\App.Repository.csproj.CoreCompileInputs.cache
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\obj\Debug\App.Repository.csproj.CopyComplete
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\obj\Debug\ModelsAndRepo.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.Repository\obj\Debug\ModelsAndRepo.pdb

@@ -5,6 +5,10 @@ using System.Web.Http;
 using App.Models;
 using AutoMapper;
 using System.Linq;
+using System;
+using System.Text;
+using System.Security.Authentication;
+using System.Security.Cryptography;
 
 namespace Api.Controllers
 {
@@ -69,9 +73,23 @@ namespace Api.Controllers
                 return null;
             var user = repo.GetQueryableSet().FirstOrDefault(u => u.Email == value.Email);
             if (user != null)
-                return Mapper.Map<AppUserModel>(user);
+            {                
+                var result = Mapper.Map<AppUserModel>(user);
+                result.Password = value.Password;
+                return result;
+            }
 
             return null;
+        }
+
+        private string HashText(string text, string salt, HashAlgorithmType hasher)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var combinedHash = Encoding.UTF8.GetBytes(string.Concat(text, salt));
+
+                return Convert.ToBase64String(sha256.ComputeHash(combinedHash));
+            }
         }
     }
 }

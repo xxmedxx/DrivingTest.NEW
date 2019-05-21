@@ -1,0 +1,6 @@
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\bin\Debug\Repository.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\bin\Debug\Repository.pdb
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\obj\Debug\App.IRepository.csprojAssemblyReference.cache
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\obj\Debug\App.IRepository.csproj.CoreCompileInputs.cache
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\obj\Debug\Repository.dll
+C:\Users\mohamed\Documents\GitHub\DrivingTest.NEW\App.IRepository\obj\Debug\Repository.pdb

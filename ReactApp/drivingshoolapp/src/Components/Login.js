@@ -5,20 +5,25 @@ import { Button } from "react-bootstrap";
 export default class Login extends React.Component{
   
     loginClick = () =>{
-      fetch('http://localhost:21179/api/login', {
+      alert("in click")
+      fetch('http://localhost:2275//api/login', {
         method: "post",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         },
         //make sure to serialize your JSON body
-        body: "Email=h_mohamed@live.net"
+        body: "Email=h_mohamed@live.net&Password=12345"
       })
         .then(response => response.json())
-        .then(data => {this.checkAndRedirect(data);});
+        .then(data => {this.checkAndRedirect(data);})
+        .catch(error => alert('Error:', error));
     }
 
     checkAndRedirect(user){
-      alert(user.Email)
+      console.log(user);
+      if(user!== null)
+        this.props.history.push("/home")
+      alert(user);
     }
   
     render() {
@@ -27,8 +32,8 @@ export default class Login extends React.Component{
           <Form  style={{maxWidth:'350px',margin:'0 auto'}}>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email address:</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" required/>
-                <Form.Text className="text-muted">
+                <Form.Control type="email" placeholder="Enter email" />
+                <Form.Text className="text-muted" type="email" required>
                   We'll never share your email with anyone else.
                 </Form.Text>
               </Form.Group>
