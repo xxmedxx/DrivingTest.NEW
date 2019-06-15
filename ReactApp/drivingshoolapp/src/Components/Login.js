@@ -11,7 +11,7 @@ export default class Login extends React.Component{
   }
     loginClick = () =>{
       alert(this.email)
-      fetch('http://localhost:2275//api/login', {
+      fetch('http://http://localhost:1669//api/login', {
         method: "post",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
