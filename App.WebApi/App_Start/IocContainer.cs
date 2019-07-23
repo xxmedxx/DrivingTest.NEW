@@ -17,18 +17,14 @@ namespace App.WebApi
         public static void Configure()
         {
             var builder = new ContainerBuilder();
+
             builder.RegisterType<DrivingTestDBEntities>().AsSelf();
-            builder.RegisterGeneric(typeof(Repository<>))
-                   .As(typeof(IRepository<>))
-                   .InstancePerDependency();
+            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
 
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly()); //Register WebApi Controllers
-
             var container = builder.Build();
-            //var resolve = new AutofacWebApiDependencyResolver(container);
-            //GlobalConfiguration.Configuration.DependencyResolver = resolve;
 
-            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver((IContainer)container); //Set the WebApi DependencyResolver
+            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container); //Set the WebApi DependencyResolver
         }
     }
 }

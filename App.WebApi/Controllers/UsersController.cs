@@ -9,9 +9,17 @@ using System;
 using System.Text;
 using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using System.IO;
+using System.Web.Http.Cors;
+using System.Net;
+using System.Net.Http;
 
 namespace App.WebApi.Controllers
 {
+    [CustomAuthorization]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UsersController : ApiController
     {
         private readonly IRepository<AspNetUser> repo;
@@ -36,7 +44,8 @@ namespace App.WebApi.Controllers
         }
 
         // POST: api/USers
-        [Route("api/new/")]
+        [AllowAnonymous]
+        [Route("api/register")]
         [HttpPost]
         public AppUserModel Post([FromBody]AppUserModel value)
         {
@@ -53,6 +62,7 @@ namespace App.WebApi.Controllers
         }
 
         // PUT: api/USers/5
+        [HttpPut]
         public AppUserModel Put(string id, [FromBody]AppUserModel value)
         {
             var obj = Mapper.Map<AspNetUser>(value);
@@ -61,25 +71,29 @@ namespace App.WebApi.Controllers
         }
 
         // DELETE: api/USers/5
+        [HttpDelete]
         public int Delete(string id)
         {
             return repo.Delete(id);
         }
+
+        //Login: api/login
+        [AllowAnonymous]
         [Route("api/login")]
-        [HttpPost]
-        public AppUserModel Login([FromBody]AppUserModel value)
+        [HttpGet]
+        public IHttpActionResult Login([FromUri]AppUserModel value)
         {
             if (value == null)
-                return null;
+                return BadRequest("User is null");
+
             var user = repo.GetQueryableSet().FirstOrDefault(u => u.Email == value.Email);
             if (user != null)
-            {                
-                var result = Mapper.Map<AppUserModel>(user);
-                result.Password = value.Password;
-                return result;
+            {
+                var token = "~" +  user.Email + "~" + user.PasswordHash + "~" + DateTime.Now.ToString("MM/dd/yy HH:mm:ss")+ "~";
+                token += JsonConvert.SerializeObject(Mapper.Map<AppUserModel>(user)) + "~";
+                return Ok(EncriptToken(token, user.Email));
             }
-
-            return null;
+            return NotFound();
         }
 
         private string HashText(string text, string salt, HashAlgorithmType hasher)
@@ -90,6 +104,30 @@ namespace App.WebApi.Controllers
 
                 return Convert.ToBase64String(sha256.ComputeHash(combinedHash));
             }
+        }
+
+        private string EncriptToken(string data,string keyStr)
+        {
+            MemoryStream memStream = null;
+            try
+            {
+                byte[] key = { };
+                byte[] IV = { 12, 21, 43, 17, 57, 35, 67, 27 };
+                string encryptKey = "aXb2uy4z"; // MUST be 8 characters
+                key = Encoding.UTF8.GetBytes(encryptKey);
+                byte[] byteInput = Encoding.UTF8.GetBytes(data);
+                DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
+                memStream = new MemoryStream();
+                ICryptoTransform transform = provider.CreateEncryptor(key, IV);
+                CryptoStream cryptoStream = new CryptoStream(memStream, transform, CryptoStreamMode.Write);
+                cryptoStream.Write(byteInput, 0, byteInput.Length);
+                cryptoStream.FlushFinalBlock();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            return Convert.ToBase64String(memStream.ToArray());
         }
     }
 }

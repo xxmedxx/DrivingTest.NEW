@@ -1,3 +1,3 @@
-export default Parameters{
-    "serverName":"";
+export default {
+    serverName:"http://localhost:1669/",
 }

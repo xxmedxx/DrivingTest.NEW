@@ -31,11 +31,11 @@ export default class NavbarMenu extends React.Component {
     return (
       <div>
         <Navbar color="info" light expand="md">
-          <NavbarBrand href="/">Driving School</NavbarBrand>
+          <NavbarBrand href="#/home">Driving School</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto bg-blue" navbar variant="pills" >
-              <NavItem active>
+              <NavItem>
                 <NavLink href="#/Home">Home</NavLink>
               </NavItem>
               <UncontrolledDropdown nav inNavbar>
@@ -44,10 +44,10 @@ export default class NavbarMenu extends React.Component {
                   </DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem>
-                      <NavLink href="/components/About">My Exams</NavLink>
+                      <NavLink href="#/MyExams">My Exams</NavLink>
                     </DropdownItem>
                     <DropdownItem>
-                      <NavLink href="/components/About">New Exam</NavLink>
+                      <NavLink href="#/NewExam">New Exam</NavLink>
                     </DropdownItem>
                   </DropdownMenu>
               </UncontrolledDropdown>
@@ -57,10 +57,10 @@ export default class NavbarMenu extends React.Component {
                   </DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem>
-                      <NavLink href="/components/About">All Sereis</NavLink>
+                      <NavLink href="#/AllSeries">All Sereis</NavLink>
                     </DropdownItem>
                     <DropdownItem>
-                      <NavLink href="/components/About">New Sereis</NavLink>
+                      <NavLink href="#/NewSeries">New Sereis</NavLink>
                     </DropdownItem>
                   </DropdownMenu>
               </UncontrolledDropdown>
@@ -71,7 +71,7 @@ export default class NavbarMenu extends React.Component {
                 <NavLink href="#/About">About</NavLink>
               </NavItem>
               <NavItem >
-                <NavLink href="#/Login">Log in/Log out</NavLink>
+                {(this.props.isLogedIn? <NavLink href="#/Logout">Logout</NavLink> :  <NavLink href="#/Login">Login</NavLink>)}
               </NavItem>             
             </Nav>
             
