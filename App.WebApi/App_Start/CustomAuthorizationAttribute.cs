@@ -20,8 +20,9 @@ namespace App.WebApi
     {
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            if (SkipAuthorization(actionContext))
+            if (SkipAuthorization(actionContext))//for login and register requests
                 return;
+
             var utility = new UsersUtility();
             if (actionContext.Request.Headers.Authorization == null)
             {                
@@ -30,7 +31,6 @@ namespace App.WebApi
                     StatusCode = HttpStatusCode.Unauthorized,
                     Content = new StringContent("Access Token Required")
                 };
-                //throw new UnauthorizedAccessException("Access Token Required");
             }
             else
             {
@@ -59,7 +59,11 @@ namespace App.WebApi
 
         public AspNetUser GetUserNameAndPassword(string token, HttpActionContext actionContext)
         {
-            string tokenDecripted = DecriptToken(token, "$TG%FFR%56");
+            var email = token.Split('|')[0];
+            email = Encoding.UTF8.GetString(Convert.FromBase64String(email));
+
+            token = token.Split('|')[1];
+            string tokenDecripted = DecriptToken(token, email.Substring(8).ToUpper());
             var separitor = '~';
             var data = tokenDecripted.Split(separitor);//~|~
             if (data.Count() >= 4)
@@ -120,8 +124,8 @@ namespace App.WebApi
             {
                 byte[] key = { };
                 byte[] IV = { 12, 21, 43, 17, 57, 35, 67, 27 };
-                string encryptKey = "aXb2uy4z"; // MUST be 8 characters
-                key = Encoding.UTF8.GetBytes(encryptKey);
+                string encKey = "aXb2uy4z"; // MUST be 8 characters
+                key = Encoding.UTF8.GetBytes(encKey);
                 byte[] byteInput = new byte[data.Length];
                 byteInput = Convert.FromBase64String(data);
                 DESCryptoServiceProvider provider = new DESCryptoServiceProvider();

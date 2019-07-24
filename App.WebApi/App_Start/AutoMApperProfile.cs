@@ -9,6 +9,7 @@ namespace App.WebApi
         public AutoMApperProfile()
         {
             CreateMap<AspNetUser, AppUserModel>();
+            CreateMap<AppUserModel, AspNetUser > ();
             CreateMap<Question, QuestionModel>();
             CreateMap<Serie, SeriesModel>();
             CreateMap<Test, ExamModel>();

@@ -75,7 +75,14 @@ namespace App.EntityFramework.Repository
 
         public int Save()
         {
-            return DB.SaveChanges();
+            try
+            {
+                return DB.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return -1; 
+            }
         }
         public Task<int> SaveAsync()
         {

@@ -28,7 +28,7 @@ namespace App.WebApi.Controllers
             this.repo = repo;
         }
         // GET: api/USers
-        [Route("api/users")]
+        [Route("api/users/users")]
         [HttpGet]
         public IEnumerable<AppUserModel> Users()
         {
@@ -43,22 +43,31 @@ namespace App.WebApi.Controllers
             return Mapper.Map<AppUserModel>(user);
         }
 
-        // POST: api/USers
+        // POST: api/Users
         [AllowAnonymous]
-        [Route("api/register")]
+        [Route("api/users/register")]
         [HttpPost]
-        public AppUserModel Post([FromBody]AppUserModel value)
+        public IHttpActionResult Post([FromBody]AppUserModel value)
         {
-            if (value == null)
-                return null;
+            if (value == null || value.Email == null || value.Password == null)
+                return BadRequest("User information is empty. please fill all fields.");
+            //if (value.Password != value.ConfirmPAssword)
+            //    return BadRequest("User is null");
+
             //or will use try catch to get the exception if user alredy exists!
             if (repo.GetQueryableSet().FirstOrDefault(u => u.Email == value.Email) != null)
-                return null;
+                return BadRequest("Email already exists, please try another one.");
+
+            //check password here
 
             var obj = Mapper.Map<AspNetUser>(value);
+            obj.PasswordHash = HashText(value.Password, value.Email.ToUpper());
             var user = repo.Insert(obj);
+            var rs = repo.Save();
+            if (rs<=0)
+                return BadRequest("information incorrect, please check email and password.");
             user.EmailConfirmed = false;
-            return Mapper.Map<AppUserModel>(user);
+            return Ok();
         }
 
         // PUT: api/USers/5
@@ -79,7 +88,7 @@ namespace App.WebApi.Controllers
 
         //Login: api/login
         [AllowAnonymous]
-        [Route("api/login")]
+        [Route("api/users/login")]
         [HttpGet]
         public IHttpActionResult Login([FromUri]AppUserModel value)
         {
@@ -91,16 +100,17 @@ namespace App.WebApi.Controllers
             {
                 var token = "~" +  user.Email + "~" + user.PasswordHash + "~" + DateTime.Now.ToString("MM/dd/yy HH:mm:ss")+ "~";
                 token += JsonConvert.SerializeObject(Mapper.Map<AppUserModel>(user)) + "~";
-                return Ok(EncriptToken(token, user.Email));
+                var base64Email = Convert.ToBase64String(Encoding.UTF8.GetBytes(user.Email));
+                return Ok(base64Email +"|"+ EncriptToken(token, user.Email));
             }
             return NotFound();
         }
 
-        private string HashText(string text, string salt, HashAlgorithmType hasher)
+        private string HashText(string password, string salt)
         {
             using (var sha256 = SHA256.Create())
             {
-                var combinedHash = Encoding.UTF8.GetBytes(string.Concat(text, salt));
+                var combinedHash = Encoding.UTF8.GetBytes(string.Concat(password, salt));
 
                 return Convert.ToBase64String(sha256.ComputeHash(combinedHash));
             }
@@ -113,7 +123,7 @@ namespace App.WebApi.Controllers
             {
                 byte[] key = { };
                 byte[] IV = { 12, 21, 43, 17, 57, 35, 67, 27 };
-                string encryptKey = "aXb2uy4z"; // MUST be 8 characters
+                string encryptKey = keyStr.Substring(0,8).ToUpper(); // MUST be 8 characters
                 key = Encoding.UTF8.GetBytes(encryptKey);
                 byte[] byteInput = Encoding.UTF8.GetBytes(data);
                 DESCryptoServiceProvider provider = new DESCryptoServiceProvider();
@@ -125,7 +135,8 @@ namespace App.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return null;
+                //return null;
+                throw;
             }
             return Convert.ToBase64String(memStream.ToArray());
         }

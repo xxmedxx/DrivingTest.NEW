@@ -3,8 +3,6 @@ import Form from 'react-bootstrap/Form'
 import Params from "../Global/Params"
 import { Button } from "react-bootstrap";
 import Alert from 'react-bootstrap/Alert'
-import $ from 'jquery';
-import { request } from 'https';
 
 export default class NewUser extends React.Component{
   
@@ -20,58 +18,52 @@ export default class NewUser extends React.Component{
         };
     }
 
-    registerClick = async () =>{    
+    registerClick = (e) =>{
+      e.preventDefault();   
       this.handleDismiss();  
+      let status = 0;
       var data = {
         Email: this.email,
         Password: this.password,
-        ConfirmPassword: this.confirmPassword,
-        Authorization: 'TheReturnedToken'
+        ConfirmPassword: this.confirmPassword
       };
-      $.ajax("")
-      const heder = new Headers();
-      heder.append("Content-Type", "application/json");
-      const options ={
-        method:"post",
-        heder,
-        body:JSON.stringify(data)
-      };
-      const req = new request(Params.serverName + '/api/Account/Register',options);
-      const resp = await fetch(req);
-      const status = await resp.status;
-      console.log(">>> "+status);
 
-      // //alert(data)
-      // fetch(Params.serverName + '/api/Account/Register', {
-      //   method: "post",
-      //   headers: {
-      //     "Content-Type": 'application/json; charset=utf-8',
-      //   },
-      //   body: JSON.stringify(data)
-      // })
-      //   .then(response => { 
-      //                     response.text().then(text => {
-      //                     //   const data = text && JSON.parse(text);
-      //                     //   console.log("response>> " + JSON.stringify(data.Message));                            
-      //                     //  this.setState({show : true, errorText : JSON.stringify(data.Message)
-      //                     // + "\n" +JSON.stringify(data.ModelState["model.Email"][0])});
-      //                     if ($.xhr.status == 400)
-      //                       this.DisplayModelStateErrors($.xhr.responseJSON.ModelState);
-      //                     });
-      //                      //return response.json();
-      //                     })
-      //   .then(data => {console.log("data: " + data);})
-      //   .catch(error => {
-      //                     this.setState({show : true, errorText : JSON.stringify(error)})
-      //                      console.log("error:www " + JSON.stringify(error));
-      //                   });
-      //   // {"Message":"The request is invalid.",
-      //   //  "ModelState":{
-      //   //   "model.Email":["The Email field is required."],
-      //   //   "model.Password":["The Password must be at least 6 characters long.",
-      //   //   "The Password field is required."]
-      //   //  }
-      //   // }
+      fetch(Params.serverName + '/api/users/Register', {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          'Accept': 'application/json',
+          "Content-Type": "application/json",
+        }
+      })
+      .then((response => {
+        status = response.status;  
+        console.log(`response = ${JSON.stringify(response)}`)          
+        if(status===400){
+          this.setState({errorText:"Password or Email address is invalid, please try again!",loginError:true});
+        }
+        return response.json()
+    }))
+      .then(
+        (result) => {
+          console.log(`result = ${JSON.stringify(result)}`)
+          console.log(`status = ${status}`)
+          if(status===200) 
+            this.props.history.push("/Login");
+          else if(status===400) {
+            this.setState({errorText: result.Message ,show:true});
+          }
+        },
+        (error) => {
+          console.log(`error = ${error}`)
+          if(status===0){
+            if(error == ("TypeError: Failed to fetch")){
+              this.setState({errorText:"Service is not anvailable, please try later.",show:true});
+            }
+          }
+          this.setState({desibleLoginBtn:false});
+        }
+      );      
     }
 
     handleEmailChange = (event) =>{
@@ -94,11 +86,11 @@ export default class NewUser extends React.Component{
     render() {
       return (        
         <div className='mt-5'>
-          <Form  style={{maxWidth:'350px',margin:'0 auto'}}>
+          <Form  style={{maxWidth:'350px',margin:'0 auto'}} onSubmit={this.registerClick}>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email address:</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" onChange ={this.handleEmailChange}/>
-                <Form.Text className="text-muted" type="email" required>
+                <Form.Control type="email" placeholder="Enter email" required onChange ={this.handleEmailChange}/>
+                <Form.Text className="text-muted" >
                   We'll never share your email with anyone else.
                 </Form.Text>
               </Form.Group>
@@ -113,7 +105,7 @@ export default class NewUser extends React.Component{
                 <Form.Control type="password" placeholder="Password" required onChange ={this.handleConfirmPasswordChange}/>
               </Form.Group>
                           
-              <Button className='' variant="primary" onClick={this.registerClick}>Register</Button>
+              <input  type="submit" value="Register" disabled={this.state.desibleLoginBtn} className="btn btn-primary" variant="primary" />
               <Button className='ml-4' variant="primary" onClick={()=>{this.props.history.push("/Login")}}>Login</Button>
               
               {(this.state.show) &&      

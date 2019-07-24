@@ -19,33 +19,36 @@ export default class Login extends React.Component{
   loginClick = (e) =>{
     e.preventDefault();
     this.setState({desibleLoginBtn:true});
-    let status;
+    let status=0;
+    let error;
     
-    fetch(Params.serverName + `api/login?Email=${this.email}&Password=${this.password}`, {
+    fetch(Params.serverName + `api/users/login?Email=${this.email}&Password=${this.password}`, {
         method: "get",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         }
       })
       .then((response => {
-        status = response.status;
-        console.log("resp ==> " + status);
+        status = response.status;            
+        if(status===404){
+          this.setState({errorText:"Password or Email address is invalid, please try again!",loginError:true});
+        }
         return response.json()
     }))
       .then(
         (result) => {
-          console.log("reslt ==> " + result);
+          console.log(`result = ${JSON.stringify(result)}`)
           this.checkAndRedirect(result);
         },
         (error) => {
-          console.log("err ==> " + (error));
-          if(error == ("TypeError: Failed to fetch")){
-            this.setState({errorText:"Service is not anvailable, please try later",loginError:true});
+          if(status===0){
+            if(error == ("TypeError: Failed to fetch")){
+              this.setState({errorText:"Service is not anvailable, please try later.",loginError:true});
+            }
           }
           this.setState({desibleLoginBtn:false});
         }
       );
-
   }
 
   checkAndRedirect(token){
@@ -68,7 +71,7 @@ export default class Login extends React.Component{
   render() {
     return (
       <div className='mt-5'>
-        <Form  style={{maxWidth:'350px',margin:'0 auto'}} onSubmit={this.loginClick}>
+        <Form  style={{maxWidth:'420px',margin:'0 auto'}} onSubmit={this.loginClick}>
             <Form.Group controlId="formBasicEmail">
               <Form.Label>Email address:</Form.Label>
               <Form.Control type="email" placeholder="Enter email" required onChange={this.handleEmailChange}/>
@@ -88,11 +91,14 @@ export default class Login extends React.Component{
 
             <input  type="submit" value="Login" disabled={this.state.desibleLoginBtn} className="btn btn-primary" variant="primary" />
               
-            <Button className='ml-4' variant="primary" onClick={()=>{this.props.history.push("/Newuser")}}>Register</Button>
+            <Button className='ml-4' variant="primary" onClick={()=>{window.location = "#/Newuser"}}>Register</Button>
             
-            {this.state.loginError && <Alert variant="danger" className="mt-4"> 
-               {this.state.errorText}
-            </Alert>}
+            {
+              this.state.loginError && 
+              <Alert variant="danger" className="mt-4"> 
+                {this.state.errorText}
+              </Alert>
+            }
         </Form> 
       </div>
       
