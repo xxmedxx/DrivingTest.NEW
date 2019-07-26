@@ -79,7 +79,7 @@ namespace App.EntityFramework.Repository
             {
                 return DB.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return -1; 
             }

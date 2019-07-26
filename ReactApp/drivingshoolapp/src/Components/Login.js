@@ -9,6 +9,7 @@ export default class Login extends React.Component{
     super(props);
       this.email = "";
       this.password = "";
+      this.username="";
       this.state = {
         desibleLoginBtn:false,
         loginError:false,
@@ -22,7 +23,7 @@ export default class Login extends React.Component{
     let status=0;
     let error;
     
-    fetch(Params.serverName + `api/users/login?Email=${this.email}&Password=${this.password}`, {
+    fetch(Params.serverName + `api/users/login?Email=${this.email}&Password=${this.password}&Username=${this.username}`, {
         method: "get",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -52,7 +53,6 @@ export default class Login extends React.Component{
   }
 
   checkAndRedirect(token){
-    console.log(token);
     if(token!== null)
       {
         window.localStorage.setItem("token",token);
@@ -64,6 +64,7 @@ export default class Login extends React.Component{
   handleEmailChange = (event) =>{
     this.email = event.target.value;
   }
+  
   handlePasswordChange = (event) =>{     
     this.password = event.target.value;
   }
@@ -79,7 +80,7 @@ export default class Login extends React.Component{
                 We'll never share your email with anyone else.
               </Form.Text>
             </Form.Group>
-
+            
             <Form.Group controlId="formBasicPassword">
               <Form.Label>Password:</Form.Label>
               <Form.Control type="password" placeholder="Password" required onChange={this.handlePasswordChange}/>

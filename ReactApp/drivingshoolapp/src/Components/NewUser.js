@@ -11,21 +11,26 @@ export default class NewUser extends React.Component{
         this.email = "";
         this.password = "";
         this.confirmPassword = "";
+        this.username = "";
 
         this.state = {
           show: false,
-          errorText: ""
+          errorText: "",
+          desibleBtn:false
         };
     }
 
     registerClick = (e) =>{
       e.preventDefault();   
+      this.setState({desibleBtn:true});
       this.handleDismiss();  
       let status = 0;
+
       var data = {
         Email: this.email,
         Password: this.password,
-        ConfirmPassword: this.confirmPassword
+        ConfirmPassword: this.confirmPassword,
+        Username: this.username
       };
 
       fetch(Params.serverName + '/api/users/Register', {
@@ -38,10 +43,8 @@ export default class NewUser extends React.Component{
       })
       .then((response => {
         status = response.status;  
-        console.log(`response = ${JSON.stringify(response)}`)          
-        if(status===400){
-          this.setState({errorText:"Password or Email address is invalid, please try again!",loginError:true});
-        }
+        //console.log(`response = ${JSON.stringify(response)}`)          
+        
         return response.json()
     }))
       .then(
@@ -63,7 +66,8 @@ export default class NewUser extends React.Component{
           }
           this.setState({desibleLoginBtn:false});
         }
-      );      
+      );  
+      this.setState({desibleBtn:false});    
     }
 
     handleEmailChange = (event) =>{
@@ -77,6 +81,10 @@ export default class NewUser extends React.Component{
     handleConfirmPasswordChange = (event) =>{     
       this.confirmPassword = event.target.value;
       //console.log(this.confirmPassword)
+    }
+
+    handleUsernamChange = (event) =>{
+      this.username = event.target.value;
     }
 
     handleDismiss = () =>{     
@@ -96,6 +104,11 @@ export default class NewUser extends React.Component{
               </Form.Group>
 
               <Form.Group controlId="formBasicPassword">
+                <Form.Label>Username:</Form.Label>
+                <Form.Control type="text" placeholder="Username" required onChange={this.handleUsernamChange}/>
+              </Form.Group>
+
+              <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password:</Form.Label>
                 <Form.Control type="password" placeholder="Password" required onChange ={this.handlePasswordChange}/>
               </Form.Group>
@@ -105,7 +118,7 @@ export default class NewUser extends React.Component{
                 <Form.Control type="password" placeholder="Password" required onChange ={this.handleConfirmPasswordChange}/>
               </Form.Group>
                           
-              <input  type="submit" value="Register" disabled={this.state.desibleLoginBtn} className="btn btn-primary" variant="primary" />
+              <input  type="submit" value="Register" disabled={this.state.desibleBtn} className="btn btn-primary" variant="primary" />
               <Button className='ml-4' variant="primary" onClick={()=>{this.props.history.push("/Login")}}>Login</Button>
               
               {(this.state.show) &&      

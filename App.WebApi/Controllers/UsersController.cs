@@ -57,17 +57,26 @@ namespace App.WebApi.Controllers
             //or will use try catch to get the exception if user alredy exists!
             if (repo.GetQueryableSet().FirstOrDefault(u => u.Email == value.Email) != null)
                 return BadRequest("Email already exists, please try another one.");
+            if (repo.GetQueryableSet().FirstOrDefault(u => u.UserName == value.UserName) != null)
+                return BadRequest("Username already exists, please try another one.");
 
             //check password here
 
             var obj = Mapper.Map<AspNetUser>(value);
             obj.PasswordHash = HashText(value.Password, value.Email.ToUpper());
+            obj.EmailConfirmed = true;
+            obj.PhoneNumberConfirmed = false;
+            obj.TwoFactorEnabled = false;
+            obj.LockoutEnabled = false;
+            obj.AccessFailedCount = 0;
+           // obj.UserName = value.Email;
+            obj.Id = Guid.NewGuid().ToString();
             var user = repo.Insert(obj);
             var rs = repo.Save();
             if (rs<=0)
                 return BadRequest("information incorrect, please check email and password.");
             user.EmailConfirmed = false;
-            return Ok();
+            return Ok("Success");
         }
 
         // PUT: api/USers/5
